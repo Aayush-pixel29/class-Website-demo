@@ -1,0 +1,47 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --color-navy: #092B49;
+    --color-blue: #145EA8;
+    --color-yellow: #F4C542;
+    --color-cream: #FFFAF0;
+    --color-text: #172235;
+    --color-muted: #667085;
+    --color-whatsapp: #159447;
+  }
+
+  body {
+    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    color: #172235;
+    background-color: #F8FAFC;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  h1, h2, h3, h4, .font-heading {
+    font-family: 'Cabinet Grotesk', 'Plus Jakarta Sans', system-ui, sans-serif;
+  }
+}
+
+/* Custom utility colors */
+.bg-brand-navy { background-color: #092B49; }
+.bg-brand-blue { background-color: #145EA8; }
+.bg-brand-yellow { background-color: #F4C542; }
+.bg-brand-cream { background-color: #FFFAF0; }
+.bg-brand-whatsapp { background-color: #159447; }
+
+.text-brand-navy { color: #092B49; }
+.text-brand-blue { color: #145EA8; }
+.text-brand-yellow { color: #F4C542; }
+.text-brand-dark { color: #172235; }
+.text-brand-muted { color: #667085; }
+
+.border-brand-navy { border-color: #092B49; }
+.border-brand-blue { border-color: #145EA8; }
+.border-brand-yellow { border-color: #F4C542; }
+
+/* Custom smooth transitions */
+.transition-standard {
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
