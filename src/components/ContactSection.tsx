@@ -1,19 +1,60 @@
 import React, { useState } from 'react';
-import { Phone, MessageCircle, MapPin, Clock, Send, CheckCircle2, Navigation, ExternalLink } from 'lucide-react';
+import { Phone, MessageCircle, MapPin, Clock, Send, CheckCircle2, Navigation, ExternalLink, Loader2, AlertCircle } from 'lucide-react';
 import { INSTITUTE_DATA } from '../data/instituteData';
 
 export const ContactSection: React.FC = () => {
   const [name, setName] = useState('');
   const [mobile, setMobile] = useState('');
+  const [email, setEmail] = useState('');
   const [course, setCourse] = useState('Basic Computer Skills');
-  const [contactMethod, setContactMethod] = useState('Call');
+  const [contactMethod, setContactMethod] = useState('Phone Call');
   const [message, setMessage] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!name || !mobile) return;
-    setSubmitted(true);
+
+    setIsSubmitting(true);
+    setErrorMessage('');
+
+    try {
+      const response = await fetch(INSTITUTE_DATA.formspreeEndpoint, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+        body: JSON.stringify({
+          _subject: `New Contact Form Enquiry: ${name} - ${course}`,
+          "Customer Name": name,
+          "Mobile Number": mobile,
+          "Email Address": email || 'Not provided',
+          "Course Interested": course,
+          "Preferred Contact Method": contactMethod,
+          "Message": message || 'None',
+          "Form Source": "Website Contact Page Section",
+          "_replyto": email || undefined,
+        }),
+      });
+
+      if (response.ok) {
+        setSubmitted(true);
+      } else {
+        const data = await response.json().catch(() => ({}));
+        if (data.errors && data.errors.length > 0) {
+          setErrorMessage(data.errors.map((err: { message: string }) => err.message).join(', '));
+        } else {
+          setErrorMessage('Failed to send enquiry. Please try again or reach out directly on WhatsApp.');
+        }
+      }
+    } catch {
+      setErrorMessage('Network error. Please try again or contact us directly on WhatsApp or Call.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const whatsappUrl = `https://wa.me/${INSTITUTE_DATA.whatsappNumber}?text=${encodeURIComponent(
@@ -126,7 +167,7 @@ export const ContactSection: React.FC = () => {
                   Thank You for Your Enquiry!
                 </h3>
                 <p className="text-xs sm:text-sm text-slate-600 max-w-md mx-auto leading-relaxed">
-                  We have recorded your details. A representative from Shree Computer Classes will get back to you shortly via <strong>{contactMethod}</strong> at <strong>{mobile}</strong>.
+                  We have received your message. A representative from Shree Computer Classes will get back to you shortly via <strong>{contactMethod}</strong> at <strong>{mobile}</strong> {email ? `or via email (${email})` : ''}.
                 </p>
                 <div className="pt-3">
                   <button
@@ -134,9 +175,11 @@ export const ContactSection: React.FC = () => {
                       setSubmitted(false);
                       setName('');
                       setMobile('');
+                      setEmail('');
                       setMessage('');
+                      setErrorMessage('');
                     }}
-                    className="px-5 py-2.5 text-xs font-bold text-white bg-[#092B49] hover:bg-[#145EA8] rounded-lg transition-colors"
+                    className="px-5 py-2.5 text-xs font-bold text-white bg-[#092B49] hover:bg-[#145EA8] rounded-lg transition-colors cursor-pointer"
                   >
                     Send Another Message
                   </button>
@@ -152,6 +195,13 @@ export const ContactSection: React.FC = () => {
                     Fill this quick form and we will revert with complete batch details.
                   </p>
                 </div>
+
+                {errorMessage && (
+                  <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-xs text-red-700 flex items-start gap-2">
+                    <AlertCircle className="w-4 h-4 text-red-500 shrink-0 mt-0.5" />
+                    <span>{errorMessage}</span>
+                  </div>
+                )}
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
@@ -186,6 +236,19 @@ export const ContactSection: React.FC = () => {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-xs font-bold text-slate-700 mb-1">
+                      Email Address <span className="text-slate-400 font-normal">(Direct Email)</span>
+                    </label>
+                    <input
+                      type="email"
+                      placeholder="e.g. sunil@gmail.com"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      className="w-full px-3.5 py-2.5 text-xs sm:text-sm bg-slate-50 border border-slate-300 rounded-lg focus:bg-white focus:outline-hidden focus:ring-2 focus:ring-[#145EA8]/20 focus:border-[#145EA8]"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold text-slate-700 mb-1">
                       Course Interested In
                     </label>
                     <select
@@ -201,26 +264,27 @@ export const ContactSection: React.FC = () => {
                       <option value="General Computer Training">General Computer Training</option>
                     </select>
                   </div>
-
-                  <div>
-                    <label className="block text-xs font-bold text-slate-700 mb-1">
-                      Preferred Contact Method
-                    </label>
-                    <select
-                      value={contactMethod}
-                      onChange={(e) => setContactMethod(e.target.value)}
-                      className="w-full px-3 py-2.5 text-xs sm:text-sm bg-slate-50 border border-slate-300 rounded-lg focus:bg-white focus:outline-hidden focus:ring-2 focus:ring-[#145EA8]/20 focus:border-[#145EA8]"
-                    >
-                      <option value="WhatsApp">WhatsApp Message</option>
-                      <option value="Phone Call">Phone Call</option>
-                      <option value="In-person Visit">In-person Visit at Centre</option>
-                    </select>
-                  </div>
                 </div>
 
                 <div>
                   <label className="block text-xs font-bold text-slate-700 mb-1">
-                    Your Message / Questions
+                    Preferred Contact Method
+                  </label>
+                  <select
+                    value={contactMethod}
+                    onChange={(e) => setContactMethod(e.target.value)}
+                    className="w-full px-3 py-2.5 text-xs sm:text-sm bg-slate-50 border border-slate-300 rounded-lg focus:bg-white focus:outline-hidden focus:ring-2 focus:ring-[#145EA8]/20 focus:border-[#145EA8]"
+                  >
+                    <option value="WhatsApp Message">WhatsApp Message</option>
+                    <option value="Phone Call">Phone Call</option>
+                    <option value="Email">Email</option>
+                    <option value="In-person Visit">In-person Visit at Centre</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 mb-1">
+                    Your Message / Questions (Optional)
                   </label>
                   <textarea
                     rows={3}
@@ -234,17 +298,27 @@ export const ContactSection: React.FC = () => {
                 <div className="pt-2 flex flex-col sm:flex-row gap-3">
                   <button
                     type="submit"
-                    className="flex-1 py-3 px-5 text-xs font-bold text-white bg-[#092B49] hover:bg-[#145EA8] rounded-lg shadow-xs transition-colors flex items-center justify-center gap-2"
+                    disabled={isSubmitting}
+                    className="flex-1 py-3 px-5 text-xs font-bold text-white bg-[#092B49] hover:bg-[#145EA8] disabled:opacity-60 disabled:cursor-not-allowed rounded-lg shadow-xs transition-colors flex items-center justify-center gap-2 cursor-pointer"
                   >
-                    <Send className="w-4 h-4 text-[#F4C542]" />
-                    <span>Send Enquiry</span>
+                    {isSubmitting ? (
+                      <>
+                        <Loader2 className="w-4 h-4 animate-spin text-[#F4C542]" />
+                        <span>Submitting Enquiry...</span>
+                      </>
+                    ) : (
+                      <>
+                        <Send className="w-4 h-4 text-[#F4C542]" />
+                        <span>Send Enquiry</span>
+                      </>
+                    )}
                   </button>
 
                   <a
                     href={whatsappUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="sm:w-auto py-3 px-5 text-xs font-bold text-white bg-[#159447] hover:bg-[#12803c] rounded-lg shadow-xs transition-colors flex items-center justify-center gap-2"
+                    className="sm:w-auto py-3 px-5 text-xs font-bold text-white bg-[#159447] hover:bg-[#12803c] rounded-lg shadow-xs transition-colors flex items-center justify-center gap-2 cursor-pointer"
                   >
                     <MessageCircle className="w-4 h-4" />
                     <span>Chat on WhatsApp</span>

@@ -26,6 +26,7 @@ export const INSTITUTE_DATA = {
   tagline: "Learn Computer Skills With Confidence.",
   subTagline: "Practical computer training in a friendly classroom environment in Andheri East.",
   category: "Computer Training School / Computer Classes",
+  formspreeEndpoint: "https://formspree.io/f/xdekdybj",
   phone: "+91 98195 04128",
   phoneRaw: "+919819504128",
   displayPhone: "+91 98195 04128",
