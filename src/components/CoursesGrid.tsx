@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'motion/react';
 import { 
   Monitor, 
   FileSpreadsheet, 
@@ -13,7 +14,8 @@ import {
   Sparkles,
   Clock,
   GraduationCap,
-  Layers
+  Layers,
+  ChevronRight
 } from 'lucide-react';
 import { Course, INSTITUTE_DATA } from '../data/instituteData';
 import { CourseDetailModal } from './CourseDetailModal';
@@ -27,7 +29,6 @@ export const CoursesGrid: React.FC<CoursesGridProps> = ({ onOpenEnquiry, showAll
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
   const [activeModalCourse, setActiveModalCourse] = useState<Course | null>(null);
 
-  // Category specific color theme config
   const getCategoryTheme = (category: string) => {
     switch (category) {
       case 'Foundations':
@@ -81,7 +82,6 @@ export const CoursesGrid: React.FC<CoursesGridProps> = ({ onOpenEnquiry, showAll
     }
   };
 
-  // Map icon by course ID
   const getCourseIcon = (id: string) => {
     switch (id) {
       case 'basic-computer-skills':
@@ -114,7 +114,7 @@ export const CoursesGrid: React.FC<CoursesGridProps> = ({ onOpenEnquiry, showAll
         {/* Section Heading */}
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-4">
           <div className="max-w-2xl">
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-50 text-[#145EA8] text-xs font-bold uppercase tracking-wider mb-2">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-50 text-[#145EA8] text-xs font-extrabold uppercase tracking-wider mb-2">
               <Sparkles className="w-3.5 h-3.5 text-[#F4C542]" />
               <span>Interactive Course Explorer</span>
             </div>
@@ -129,7 +129,7 @@ export const CoursesGrid: React.FC<CoursesGridProps> = ({ onOpenEnquiry, showAll
           <div className="text-left md:text-right shrink-0">
             <button
               onClick={() => onOpenEnquiry()}
-              className="inline-flex items-center gap-1.5 text-xs font-bold text-[#145EA8] hover:text-[#092B49] bg-blue-50 hover:bg-blue-100 px-4 py-2.5 rounded-xl transition-all shadow-2xs hover:scale-105"
+              className="inline-flex items-center gap-1.5 text-xs font-bold text-[#145EA8] hover:text-[#092B49] bg-blue-50 hover:bg-blue-100 px-4 py-2.5 rounded-xl transition-all shadow-2xs hover:scale-105 cursor-pointer"
             >
               <span>Need help choosing? Ask Trainer</span>
               <ArrowRight className="w-3.5 h-3.5" />
@@ -154,109 +154,116 @@ export const CoursesGrid: React.FC<CoursesGridProps> = ({ onOpenEnquiry, showAll
           ))}
         </div>
 
-        {/* Courses Cards Grid with Color-Coded Accents */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {displayCourses.map((course) => {
-            const Icon = getCourseIcon(course.id);
-            const theme = getCategoryTheme(course.category);
-            const whatsappCourseUrl = `https://wa.me/${INSTITUTE_DATA.whatsappNumber}?text=${encodeURIComponent(
-              `Hello, I would like to enquire about the "${course.title}" course at Shree Computer Classes.`
-            )}`;
+        {/* Courses Cards Grid with Smooth Motion Layout */}
+        <motion.div layout className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <AnimatePresence>
+            {displayCourses.map((course) => {
+              const Icon = getCourseIcon(course.id);
+              const theme = getCategoryTheme(course.category);
+              const whatsappCourseUrl = `https://wa.me/${INSTITUTE_DATA.whatsappNumber}?text=${encodeURIComponent(
+                `Hello, I would like to enquire about the "${course.title}" course at Shree Computer Classes.`
+              )}`;
 
-            return (
-              <div
-                key={course.id}
-                className={`bg-white rounded-2xl border-2 border-slate-200/90 ${theme.hoverBorder} shadow-2xs hover:shadow-xl transition-all duration-300 card-hover-lift flex flex-col justify-between overflow-hidden group relative`}
-              >
-                {/* Top dynamic colored gradient bar */}
-                <div className={`h-1.5 w-full bg-gradient-to-r ${theme.gradientBar}`}></div>
+              return (
+                <motion.div
+                  layout
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.95 }}
+                  transition={{ duration: 0.3 }}
+                  key={course.id}
+                  className={`bg-white rounded-2xl border-2 border-slate-200/90 ${theme.hoverBorder} shadow-2xs hover:shadow-xl transition-all duration-300 card-hover-lift flex flex-col justify-between overflow-hidden group relative`}
+                >
+                  {/* Top dynamic colored gradient bar */}
+                  <div className={`h-1.5 w-full bg-gradient-to-r ${theme.gradientBar}`}></div>
 
-                <div className="p-6">
-                  {/* Category Badge & Icon */}
-                  <div className="flex items-center justify-between mb-4">
-                    <span className={`text-[11px] font-extrabold uppercase tracking-wider px-2.5 py-1 rounded-full border ${theme.badgeBg}`}>
-                      {course.category}
-                    </span>
-                    <div className={`w-11 h-11 rounded-xl flex items-center justify-center transition-all duration-300 shadow-2xs ${theme.iconBg}`}>
-                      <Icon className="w-5 h-5" />
+                  <div className="p-6">
+                    {/* Category Badge & Icon */}
+                    <div className="flex items-center justify-between mb-4">
+                      <span className={`text-[11px] font-extrabold uppercase tracking-wider px-2.5 py-1 rounded-full border ${theme.badgeBg}`}>
+                        {course.category}
+                      </span>
+                      <div className={`w-11 h-11 rounded-xl flex items-center justify-center transition-all duration-300 shadow-2xs ${theme.iconBg}`}>
+                        <Icon className="w-5 h-5" />
+                      </div>
+                    </div>
+
+                    {/* Course Title */}
+                    <h3 className="text-xl font-extrabold text-[#092B49] group-hover:text-[#145EA8] transition-colors mb-2 leading-snug">
+                      {course.title}
+                    </h3>
+
+                    {/* Tagline / Short description */}
+                    <p className="text-xs sm:text-sm text-slate-600 leading-relaxed mb-4 line-clamp-3">
+                      {course.description}
+                    </p>
+
+                    {/* Key Topics Highlights */}
+                    <div className="space-y-1.5 pt-3 border-t border-slate-100 text-xs">
+                      <div className="font-extrabold text-slate-800 text-[11px] uppercase tracking-wider flex items-center gap-1.5">
+                        <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+                        <span>Key Practical Modules:</span>
+                      </div>
+                      <ul className="text-slate-600 space-y-1 pl-1">
+                        {course.topicsCovered.slice(0, 3).map((topic, i) => (
+                          <li key={i} className="text-xs text-slate-700 truncate flex items-center gap-1.5">
+                            <span className="w-1 h-1 rounded-full bg-slate-400"></span>
+                            <span>{topic}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+
+                    {/* Audience Badges */}
+                    <div className="mt-4 pt-3 border-t border-slate-100">
+                      <div className="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">
+                        Best Suited For:
+                      </div>
+                      <div className="flex flex-wrap gap-1.5">
+                        {course.targetAudience.slice(0, 3).map((aud, i) => (
+                          <span key={i} className="text-[11px] font-medium px-2 py-0.5 rounded bg-slate-100 text-slate-700">
+                            {aud}
+                          </span>
+                        ))}
+                      </div>
                     </div>
                   </div>
 
-                  {/* Course Title */}
-                  <h3 className="text-xl font-extrabold text-[#092B49] group-hover:text-[#145EA8] transition-colors mb-2 leading-snug">
-                    {course.title}
-                  </h3>
-
-                  {/* Tagline / Short description */}
-                  <p className="text-xs sm:text-sm text-slate-600 leading-relaxed mb-4 line-clamp-3">
-                    {course.description}
-                  </p>
-
-                  {/* Key Topics Highlights */}
-                  <div className="space-y-1.5 pt-3 border-t border-slate-100 text-xs">
-                    <div className="font-extrabold text-slate-800 text-[11px] uppercase tracking-wider flex items-center gap-1.5">
-                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
-                      <span>Key Practical Modules:</span>
-                    </div>
-                    <ul className="text-slate-600 space-y-1 pl-1">
-                      {course.topicsCovered.slice(0, 3).map((topic, i) => (
-                        <li key={i} className="text-xs text-slate-700 truncate flex items-center gap-1.5">
-                          <span className="w-1 h-1 rounded-full bg-slate-400"></span>
-                          <span>{topic}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-
-                  {/* Audience Badges */}
-                  <div className="mt-4 pt-3 border-t border-slate-100">
-                    <div className="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">
-                      Best Suited For:
-                    </div>
-                    <div className="flex flex-wrap gap-1.5">
-                      {course.targetAudience.slice(0, 3).map((aud, i) => (
-                        <span key={i} className="text-[11px] font-medium px-2 py-0.5 rounded bg-slate-100 text-slate-700">
-                          {aud}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-
-                {/* Card Action Footer */}
-                <div className="bg-slate-50/90 p-4 border-t border-slate-100 flex items-center justify-between gap-2">
-                  <button
-                    onClick={() => setActiveModalCourse(course)}
-                    className="inline-flex items-center gap-1.5 text-xs font-bold text-[#092B49] hover:text-[#145EA8] transition-colors group-hover:translate-x-0.5"
-                  >
-                    <span>Full Syllabus</span>
-                    <ArrowRight className="w-3.5 h-3.5 text-[#145EA8]" />
-                  </button>
-
-                  <div className="flex items-center gap-2">
-                    <a
-                      href={whatsappCourseUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="p-2 text-emerald-700 hover:bg-emerald-100 bg-emerald-50 rounded-xl transition-all hover:scale-110"
-                      title="Enquire on WhatsApp"
-                      aria-label={`Enquire about ${course.title} on WhatsApp`}
-                    >
-                      <MessageCircle className="w-4 h-4" />
-                    </a>
-
+                  {/* Card Action Footer */}
+                  <div className="bg-slate-50/90 p-4 border-t border-slate-100 flex items-center justify-between gap-2">
                     <button
-                      onClick={() => onOpenEnquiry(course.title)}
-                      className="px-4 py-2 text-xs font-extrabold text-white bg-gradient-to-r from-[#092B49] to-[#145EA8] hover:from-[#145EA8] hover:to-[#092B49] rounded-xl shadow-2xs hover:shadow-md transition-all hover:scale-105 cursor-pointer"
+                      onClick={() => setActiveModalCourse(course)}
+                      className="inline-flex items-center gap-1.5 text-xs font-bold text-[#092B49] hover:text-[#145EA8] transition-colors cursor-pointer group-hover:translate-x-0.5"
                     >
-                      Enquire
+                      <span>Full Syllabus</span>
+                      <ArrowRight className="w-3.5 h-3.5 text-[#145EA8]" />
                     </button>
+
+                    <div className="flex items-center gap-2">
+                      <a
+                        href={whatsappCourseUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="p-2 text-emerald-700 hover:bg-emerald-100 bg-emerald-50 rounded-xl transition-all hover:scale-110"
+                        title="Enquire on WhatsApp"
+                        aria-label={`Enquire about ${course.title} on WhatsApp`}
+                      >
+                        <MessageCircle className="w-4 h-4" />
+                      </a>
+
+                      <button
+                        onClick={() => onOpenEnquiry(course.title)}
+                        className="px-4 py-2 text-xs font-extrabold text-white bg-gradient-to-r from-[#092B49] to-[#145EA8] hover:from-[#145EA8] hover:to-[#092B49] rounded-xl shadow-2xs hover:shadow-md transition-all hover:scale-105 cursor-pointer"
+                      >
+                        Enquire
+                      </button>
+                    </div>
                   </div>
-                </div>
-              </div>
-            );
-          })}
-        </div>
+                </motion.div>
+              );
+            })}
+          </AnimatePresence>
+        </motion.div>
 
         {/* Informative fee disclaimer */}
         <div className="mt-10 p-5 rounded-2xl bg-amber-50/90 border border-amber-300 text-xs text-amber-950 flex flex-col sm:flex-row items-start gap-3.5 shadow-2xs">
@@ -280,5 +287,3 @@ export const CoursesGrid: React.FC<CoursesGridProps> = ({ onOpenEnquiry, showAll
     </section>
   );
 };
-
-

@@ -1,17 +1,16 @@
 import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'motion/react';
 import { 
   Monitor, 
   MapPin, 
   Clock, 
   CheckCircle2, 
   Sparkles, 
-  Upload, 
-  Info,
-  Maximize2,
-  ChevronRight,
-  ShieldCheck,
-  Camera,
-  Image as ImageIcon
+  ChevronRight, 
+  ShieldCheck, 
+  Camera, 
+  Eye,
+  Award
 } from 'lucide-react';
 import { INSTITUTE_DATA } from '../data/instituteData';
 
@@ -30,21 +29,24 @@ export const ClassroomShowcase: React.FC<ClassroomShowcaseProps> = ({ onOpenEnqu
       src: '/images/classroom-lab.jpg',
       title: 'Practical Computer Lab Setup',
       subtitle: 'Dedicated systems with individual monitors, keyboards & mouse',
-      badge: 'Workstations'
+      badge: 'Dedicated Workstations',
+      tagColor: 'bg-[#092B49]'
     },
     {
       id: 1,
       src: '/images/teacher-guidance.jpg',
       title: '1-on-1 Step-by-Step Instructor Support',
       subtitle: 'Patient explanations and doubt clearance for all students',
-      badge: 'Faculty Guidance'
+      badge: 'Personalized Coaching',
+      tagColor: 'bg-emerald-700'
     },
     {
       id: 2,
       src: '/images/excel-practical.jpg',
       title: 'Live Software & Excel Training',
       subtitle: 'Hands-on practice on spreadsheets, formulas, invoices & reports',
-      badge: 'Live Projects'
+      badge: 'Live Office Exercises',
+      tagColor: 'bg-[#145EA8]'
     }
   ];
 
@@ -86,7 +88,7 @@ export const ClassroomShowcase: React.FC<ClassroomShowcaseProps> = ({ onOpenEnqu
         {/* Section Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-4">
           <div className="max-w-2xl">
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-50 text-[#145EA8] text-xs font-bold uppercase tracking-wider mb-2">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-50 text-[#145EA8] text-xs font-extrabold uppercase tracking-wider mb-2">
               <Camera className="w-3.5 h-3.5 text-[#F4C542]" />
               <span>Real Classroom & Facility Tour</span>
             </div>
@@ -101,7 +103,7 @@ export const ClassroomShowcase: React.FC<ClassroomShowcaseProps> = ({ onOpenEnqu
           <div className="shrink-0">
             <button
               onClick={onOpenEnquiry}
-              className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-sm transition-all hover:scale-105"
+              className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-sm transition-all hover:scale-105 cursor-pointer"
             >
               <span>Schedule Free Classroom Visit</span>
               <ChevronRight className="w-4 h-4" />
@@ -115,16 +117,23 @@ export const ClassroomShowcase: React.FC<ClassroomShowcaseProps> = ({ onOpenEnqu
           {/* Main Active Photo Container */}
           <div className="lg:col-span-8 bg-white rounded-3xl border-2 border-slate-200/90 shadow-lg overflow-hidden flex flex-col justify-between">
             
-            <div className="relative aspect-16/10 sm:aspect-16/9 overflow-hidden group bg-slate-900">
-              <img
-                src={galleryPhotos[activePhotoTab].src}
-                alt={galleryPhotos[activePhotoTab].title}
-                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-              />
+            <div className="relative aspect-16/10 sm:aspect-16/9 overflow-hidden bg-slate-900">
+              <AnimatePresence mode="wait">
+                <motion.img
+                  key={activePhotoTab}
+                  src={galleryPhotos[activePhotoTab].src}
+                  alt={galleryPhotos[activePhotoTab].title}
+                  initial={{ opacity: 0, scale: 1.04 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.98 }}
+                  transition={{ duration: 0.35 }}
+                  className="w-full h-full object-cover"
+                />
+              </AnimatePresence>
 
               {/* Overlay Gradient with Information */}
-              <div className="absolute inset-0 bg-gradient-to-t from-[#092B49]/90 via-[#092B49]/20 to-transparent flex flex-col justify-end p-6 sm:p-8 text-white">
-                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#F4C542] text-[#092B49] text-xs font-black uppercase tracking-wider w-fit mb-2 shadow-sm">
+              <div className="absolute inset-0 bg-gradient-to-t from-[#092B49]/95 via-[#092B49]/30 to-transparent flex flex-col justify-end p-6 sm:p-8 text-white">
+                <div className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-white text-xs font-black uppercase tracking-wider w-fit mb-2 shadow-sm ${galleryPhotos[activePhotoTab].tagColor}`}>
                   <span>{galleryPhotos[activePhotoTab].badge}</span>
                 </div>
                 <h3 className="text-xl sm:text-2xl font-extrabold text-white mb-1">
@@ -225,7 +234,7 @@ export const ClassroomShowcase: React.FC<ClassroomShowcaseProps> = ({ onOpenEnqu
               <div className="pt-2 flex items-center gap-2">
                 <button
                   onClick={onOpenEnquiry}
-                  className="px-3.5 py-2 text-xs font-extrabold bg-[#F4C542] hover:bg-amber-300 text-[#092B49] rounded-xl transition-colors shadow-2xs"
+                  className="px-3.5 py-2 text-xs font-extrabold bg-[#F4C542] hover:bg-amber-300 text-[#092B49] rounded-xl transition-colors shadow-2xs cursor-pointer"
                 >
                   Book Walk-In Visit
                 </button>
@@ -246,6 +255,3 @@ export const ClassroomShowcase: React.FC<ClassroomShowcaseProps> = ({ onOpenEnqu
     </section>
   );
 };
-
-
-
