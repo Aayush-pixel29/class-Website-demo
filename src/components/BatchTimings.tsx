@@ -132,34 +132,49 @@ export const BatchTimings: React.FC<BatchTimingsProps> = ({ onOpenEnquiry }) => 
   const getStatusBadge = (status: BatchSlot['status']) => {
     switch (status) {
       case 'Seats Available':
-        return 'bg-emerald-50 text-emerald-700 border-emerald-200';
+        return 'bg-emerald-50 text-emerald-700 border-emerald-300 ring-1 ring-emerald-400/20';
       case 'Few Seats Left':
-        return 'bg-amber-50 text-amber-800 border-amber-200';
+        return 'bg-amber-50 text-amber-800 border-amber-300 ring-1 ring-amber-400/20';
       case 'Filling Fast':
-        return 'bg-blue-50 text-blue-800 border-blue-200';
+        return 'bg-blue-50 text-blue-800 border-blue-300 ring-1 ring-blue-400/20';
       default:
-        return 'bg-slate-50 text-slate-700 border-slate-200';
+        return 'bg-slate-50 text-slate-700 border-slate-300';
+    }
+  };
+
+  const getSlotTypeBadge = (type: BatchSlot['slotType']) => {
+    switch (type) {
+      case 'Morning':
+        return 'bg-amber-100/80 text-amber-900 border-amber-300';
+      case 'Afternoon':
+        return 'bg-sky-100/80 text-sky-900 border-sky-300';
+      case 'Evening':
+        return 'bg-indigo-100/80 text-indigo-900 border-indigo-300';
+      case 'Weekend':
+        return 'bg-purple-100/80 text-purple-900 border-purple-300';
+      default:
+        return 'bg-slate-100 text-slate-700 border-slate-300';
     }
   };
 
   return (
-    <section id="batches" className="py-14 bg-white border-b border-slate-200">
+    <section id="batches" className="py-16 bg-white border-b border-slate-200 relative">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Header Section */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
           <div>
-            <div className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#145EA8]">
-              <Clock className="w-3.5 h-3.5 text-[#145EA8]" />
-              <span>Current Batch Schedule</span>
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-bold uppercase tracking-wider mb-2">
+              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
+              <span>Live Batch Timetable</span>
               <span className="text-slate-300">·</span>
-              <span>Open 9:00 AM – 10:00 PM Daily</span>
+              <span>Open 9 AM – 10 PM Daily</span>
             </div>
-            <h2 className="text-2xl sm:text-3xl font-extrabold text-[#092B49] mt-2 mb-2">
-              Class Batch Timings & Availability
+            <h2 className="text-3xl sm:text-4xl font-extrabold text-[#092B49] tracking-tight">
+              Class Batch Timings & Seat Status
             </h2>
-            <p className="text-sm sm:text-base text-slate-600 max-w-2xl">
-              Morning, afternoon, evening, and weekend slots are structured to accommodate students, beginners, and working professionals.
+            <p className="text-sm sm:text-base text-slate-600 max-w-2xl mt-2">
+              Structured morning, afternoon, evening, and weekend slots for students, beginners, and working adults.
             </p>
           </div>
 
@@ -168,7 +183,7 @@ export const BatchTimings: React.FC<BatchTimingsProps> = ({ onOpenEnquiry }) => 
             {!isEditing ? (
               <button
                 onClick={handleStartEdit}
-                className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-bold text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors border border-slate-200"
+                className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-bold text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-xl transition-all border border-slate-200 hover:scale-105"
                 title="Update real-time batch slot availability"
               >
                 <Edit3 className="w-3.5 h-3.5 text-[#145EA8]" />
@@ -178,14 +193,14 @@ export const BatchTimings: React.FC<BatchTimingsProps> = ({ onOpenEnquiry }) => 
               <div className="flex items-center gap-2">
                 <button
                   onClick={handleSaveEdits}
-                  className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-700 rounded-lg transition-colors shadow-2xs"
+                  className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-700 rounded-xl transition-all shadow-2xs hover:scale-105"
                 >
                   <Check className="w-3.5 h-3.5" />
                   <span>Save Changes</span>
                 </button>
                 <button
                   onClick={handleResetDefaults}
-                  className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-medium text-slate-600 hover:text-slate-900 bg-white border border-slate-200 rounded-lg transition-colors"
+                  className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-medium text-slate-600 hover:text-slate-900 bg-white border border-slate-200 rounded-xl transition-colors"
                 >
                   <RefreshCw className="w-3 h-3" />
                   <span>Reset</span>
@@ -196,21 +211,22 @@ export const BatchTimings: React.FC<BatchTimingsProps> = ({ onOpenEnquiry }) => 
         </div>
 
         {/* Live Filter Bar */}
-        <div className="flex items-center gap-1.5 overflow-x-auto pb-2 mb-6 text-xs font-semibold">
+        <div className="flex items-center gap-2 overflow-x-auto pb-3 mb-8 text-xs font-bold no-scrollbar">
           {filterOptions.map(option => (
             <button
               key={option}
               onClick={() => setActiveFilter(option)}
-              className={`px-3.5 py-1.5 rounded-md transition-colors whitespace-nowrap ${
+              className={`px-4 py-2 rounded-xl transition-all duration-200 whitespace-nowrap cursor-pointer ${
                 activeFilter === option
-                  ? 'bg-[#092B49] text-white'
-                  : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                  ? 'bg-gradient-to-r from-[#092B49] to-[#145EA8] text-white shadow-sm scale-105 font-black'
+                  : 'bg-slate-100 hover:bg-slate-200 text-slate-700 hover:scale-102'
               }`}
             >
-              {option === 'All' ? 'All Batches' : `${option} Slots`}
+              {option === 'All' ? '⚡ All Batches' : `${option} Batches`}
             </button>
           ))}
         </div>
+
 
         {/* Editing mode banner */}
         {isEditing && (
@@ -247,7 +263,7 @@ export const BatchTimings: React.FC<BatchTimingsProps> = ({ onOpenEnquiry }) => 
                   <tr key={slot.id} className="hover:bg-slate-50/70 transition-colors">
                     
                     {/* Course */}
-                    <td className="py-3.5 px-4 sm:px-6 font-bold text-[#092B49]">
+                    <td className="py-4 px-4 sm:px-6 font-bold text-[#092B49]">
                       {isEditing ? (
                         <input
                           type="text"
@@ -256,17 +272,17 @@ export const BatchTimings: React.FC<BatchTimingsProps> = ({ onOpenEnquiry }) => 
                           className="w-full px-2 py-1 text-xs bg-white border border-slate-300 rounded font-normal"
                         />
                       ) : (
-                        <div className="flex items-center gap-2">
-                          <span>{slot.courseName}</span>
-                          <span className="lg:hidden text-[10px] font-semibold text-slate-400 block sm:inline">
-                            ({slot.slotType})
+                        <div className="flex flex-col sm:flex-row sm:items-center gap-1.5">
+                          <span className="font-extrabold text-slate-900">{slot.courseName}</span>
+                          <span className={`inline-block text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-full border w-fit ${getSlotTypeBadge(slot.slotType)}`}>
+                            {slot.slotType}
                           </span>
                         </div>
                       )}
                     </td>
 
                     {/* Days */}
-                    <td className="py-3.5 px-4 text-slate-600 whitespace-nowrap">
+                    <td className="py-4 px-4 text-slate-600 whitespace-nowrap">
                       {isEditing ? (
                         <input
                           type="text"
@@ -283,7 +299,7 @@ export const BatchTimings: React.FC<BatchTimingsProps> = ({ onOpenEnquiry }) => 
                     </td>
 
                     {/* Time Slot */}
-                    <td className="py-3.5 px-4 font-semibold text-slate-900 whitespace-nowrap">
+                    <td className="py-4 px-4 font-bold text-slate-900 whitespace-nowrap">
                       {isEditing ? (
                         <input
                           type="text"
@@ -300,7 +316,7 @@ export const BatchTimings: React.FC<BatchTimingsProps> = ({ onOpenEnquiry }) => 
                     </td>
 
                     {/* Availability Status */}
-                    <td className="py-3.5 px-4 whitespace-nowrap">
+                    <td className="py-4 px-4 whitespace-nowrap">
                       {isEditing ? (
                         <select
                           value={slot.status}
@@ -313,14 +329,15 @@ export const BatchTimings: React.FC<BatchTimingsProps> = ({ onOpenEnquiry }) => 
                           <option value="Confirm with Centre">Confirm with Centre</option>
                         </select>
                       ) : (
-                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-bold border ${getStatusBadge(slot.status)}`}>
-                          {slot.status}
+                        <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold border ${getStatusBadge(slot.status)}`}>
+                          <span className={`w-1.5 h-1.5 rounded-full ${slot.status === 'Seats Available' ? 'bg-emerald-500' : slot.status === 'Few Seats Left' ? 'bg-amber-500' : 'bg-blue-500'}`}></span>
+                          <span>{slot.status}</span>
                         </span>
                       )}
                     </td>
 
                     {/* Batch note */}
-                    <td className="py-3.5 px-4 text-xs text-slate-500 hidden lg:table-cell">
+                    <td className="py-4 px-4 text-xs text-slate-500 hidden lg:table-cell">
                       {isEditing ? (
                         <input
                           type="text"
@@ -334,15 +351,16 @@ export const BatchTimings: React.FC<BatchTimingsProps> = ({ onOpenEnquiry }) => 
                     </td>
 
                     {/* Action */}
-                    <td className="py-3.5 px-4 text-right whitespace-nowrap">
+                    <td className="py-4 px-4 text-right whitespace-nowrap">
                       <button
                         onClick={() => onOpenEnquiry(`${slot.courseName} (${slot.timeSlot})`)}
-                        className="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-bold text-white bg-[#145EA8] hover:bg-[#092B49] rounded-md transition-colors"
+                        className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-extrabold text-white bg-gradient-to-r from-[#092B49] to-[#145EA8] hover:from-[#145EA8] hover:to-[#092B49] rounded-xl transition-all shadow-2xs hover:scale-105 cursor-pointer"
                       >
-                        <MessageSquare className="w-3 h-3 text-[#F4C542]" />
-                        <span>Book Slot</span>
+                        <MessageSquare className="w-3.5 h-3.5 text-[#F4C542]" />
+                        <span>Reserve Slot</span>
                       </button>
                     </td>
+
 
                   </tr>
                 ))}
