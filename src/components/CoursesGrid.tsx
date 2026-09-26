@@ -9,7 +9,10 @@ import {
   ArrowRight,
   MessageCircle,
   CheckCircle2,
-  Info
+  Info,
+  Sparkles,
+  Clock,
+  GraduationCap
 } from 'lucide-react';
 import { Course, INSTITUTE_DATA } from '../data/instituteData';
 import { CourseDetailModal } from './CourseDetailModal';
@@ -50,34 +53,45 @@ export const CoursesGrid: React.FC<CoursesGridProps> = ({ onOpenEnquiry, showAll
   const displayCourses = showAll ? filteredCourses : filteredCourses.slice(0, 6);
 
   return (
-    <section id="courses" className="py-14 bg-white border-b border-slate-200">
+    <section id="courses" className="py-16 bg-white border-b border-slate-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Section Heading */}
-        <div className="max-w-3xl mb-8">
-          <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#145EA8]">
-            <span>Course Catalog</span>
-            <span className="text-slate-300">·</span>
-            <span>Andheri East Centre</span>
+        <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-4">
+          <div className="max-w-2xl">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-50 text-[#145EA8] text-xs font-bold uppercase tracking-wider mb-2">
+              <Sparkles className="w-3.5 h-3.5 text-[#F4C542]" />
+              <span>Job-Ready & Skill-Based Modules</span>
+            </div>
+            <h2 className="text-3xl sm:text-4xl font-extrabold text-[#092B49] tracking-tight">
+              Explore Available Computer Courses
+            </h2>
+            <p className="text-sm sm:text-base text-slate-600 mt-2">
+              100% practical, hands-on computer courses for students, beginners, commerce learners, and professionals.
+            </p>
           </div>
-          <h2 className="text-2xl sm:text-3xl font-extrabold text-[#092B49] mt-2 mb-3">
-            What Would You Like To Learn?
-          </h2>
-          <p className="text-sm sm:text-base text-slate-600">
-            Explore our practical computer training courses. Because fees and batch schedules depend on your timing preferences, contact the centre directly for fee quotes and batch enrollment.
-          </p>
+
+          <div className="text-left md:text-right shrink-0">
+            <button
+              onClick={() => onOpenEnquiry()}
+              className="inline-flex items-center gap-1.5 text-xs font-bold text-[#145EA8] hover:text-[#092B49] bg-blue-50 hover:bg-blue-100/70 px-3.5 py-2 rounded-lg transition-colors"
+            >
+              <span>Need help choosing a course?</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </button>
+          </div>
         </div>
 
-        {/* Interactive Category Filter Tabs (Zero-pill button styling as per frontend skill) */}
-        <div className="flex items-center gap-1.5 overflow-x-auto pb-3 mb-8 no-scrollbar text-xs font-semibold">
+        {/* Category Filter Pills */}
+        <div className="flex items-center gap-2 overflow-x-auto pb-3 mb-10 no-scrollbar text-xs font-bold">
           {categories.map((cat) => (
             <button
               key={cat}
               onClick={() => setSelectedCategory(cat)}
-              className={`px-3.5 py-2 rounded-md transition-colors whitespace-nowrap ${
+              className={`px-4 py-2.5 rounded-xl transition-all whitespace-nowrap ${
                 selectedCategory === cat
-                  ? 'bg-[#092B49] text-white'
-                  : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                  ? 'bg-gradient-to-r from-[#092B49] to-[#145EA8] text-white shadow-sm scale-105'
+                  : 'bg-slate-100/90 text-slate-700 hover:bg-slate-200'
               }`}
             >
               {cat === 'All' ? 'All Courses' : cat}
@@ -96,15 +110,15 @@ export const CoursesGrid: React.FC<CoursesGridProps> = ({ onOpenEnquiry, showAll
             return (
               <div
                 key={course.id}
-                className="bg-white rounded-xl border border-slate-200 hover:border-[#145EA8]/50 shadow-2xs hover:shadow-xs transition-standard flex flex-col justify-between overflow-hidden group"
+                className="bg-white rounded-2xl border border-slate-200 hover:border-blue-400/60 shadow-2xs hover:shadow-lg transition-all card-hover-lift flex flex-col justify-between overflow-hidden group"
               >
                 <div className="p-6">
-                  {/* Category & Icon */}
+                  {/* Top Bar inside Card */}
                   <div className="flex items-center justify-between mb-4">
-                    <span className="text-xs font-semibold text-slate-500">
+                    <span className="text-[11px] font-extrabold uppercase tracking-wider px-2.5 py-1 rounded-full bg-slate-100 text-slate-700 group-hover:bg-blue-50 group-hover:text-[#145EA8] transition-colors">
                       {course.category}
                     </span>
-                    <div className="w-10 h-10 rounded-lg bg-blue-50 text-[#145EA8] flex items-center justify-center group-hover:bg-[#145EA8] group-hover:text-white transition-colors">
+                    <div className="w-11 h-11 rounded-xl bg-blue-50 text-[#145EA8] flex items-center justify-center group-hover:bg-[#092B49] group-hover:text-[#F4C542] transition-all shadow-2xs">
                       <Icon className="w-5 h-5" />
                     </div>
                   </div>
@@ -115,19 +129,34 @@ export const CoursesGrid: React.FC<CoursesGridProps> = ({ onOpenEnquiry, showAll
                   </h3>
 
                   {/* Tagline / Short description */}
-                  <p className="text-xs sm:text-sm text-slate-600 leading-relaxed mb-4">
+                  <p className="text-xs sm:text-sm text-slate-600 leading-relaxed mb-4 line-clamp-3">
                     {course.description}
                   </p>
 
-                  {/* Who It's For list */}
-                  <div className="space-y-1.5 pt-2 border-t border-slate-100 text-xs">
-                    <div className="font-semibold text-slate-700 text-[11px] uppercase tracking-wider">
+                  {/* Key Topics Highlights */}
+                  <div className="space-y-1.5 pt-3 border-t border-slate-100 text-xs">
+                    <div className="font-bold text-slate-800 text-[11px] uppercase tracking-wider flex items-center gap-1.5">
+                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+                      <span>Key Topics Covered:</span>
+                    </div>
+                    <ul className="text-slate-600 space-y-1 pl-1">
+                      {course.topicsCovered.slice(0, 3).map((topic, i) => (
+                        <li key={i} className="text-xs text-slate-700 truncate">
+                          • {topic}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  {/* Audience Pills */}
+                  <div className="mt-4 pt-3 border-t border-slate-100">
+                    <div className="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">
                       Ideal for:
                     </div>
-                    <div className="text-slate-600 flex flex-wrap gap-x-2 gap-y-1">
+                    <div className="flex flex-wrap gap-1.5">
                       {course.targetAudience.slice(0, 3).map((aud, i) => (
-                        <span key={i} className="text-slate-700">
-                          • {aud}
+                        <span key={i} className="text-[11px] font-medium px-2 py-0.5 rounded bg-slate-100 text-slate-700">
+                          {aud}
                         </span>
                       ))}
                     </div>
@@ -140,7 +169,7 @@ export const CoursesGrid: React.FC<CoursesGridProps> = ({ onOpenEnquiry, showAll
                     onClick={() => setActiveModalCourse(course)}
                     className="inline-flex items-center gap-1.5 text-xs font-bold text-[#092B49] hover:text-[#145EA8] transition-colors"
                   >
-                    <span>View Syllabus</span>
+                    <span>Full Syllabus</span>
                     <ArrowRight className="w-3.5 h-3.5" />
                   </button>
 
@@ -149,7 +178,7 @@ export const CoursesGrid: React.FC<CoursesGridProps> = ({ onOpenEnquiry, showAll
                       href={whatsappCourseUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="p-2 text-emerald-700 hover:bg-emerald-50 rounded-md transition-colors"
+                      className="p-2 text-emerald-700 hover:bg-emerald-100/70 bg-emerald-50 rounded-lg transition-colors"
                       title="Enquire on WhatsApp"
                       aria-label={`Enquire about ${course.title} on WhatsApp`}
                     >
@@ -158,7 +187,7 @@ export const CoursesGrid: React.FC<CoursesGridProps> = ({ onOpenEnquiry, showAll
 
                     <button
                       onClick={() => onOpenEnquiry(course.title)}
-                      className="px-3 py-1.5 text-xs font-bold text-white bg-[#145EA8] hover:bg-[#092B49] rounded-md transition-colors"
+                      className="px-3.5 py-1.5 text-xs font-bold text-white bg-gradient-to-r from-[#092B49] to-[#145EA8] hover:from-[#145EA8] hover:to-[#092B49] rounded-lg shadow-2xs transition-all"
                     >
                       Enquire
                     </button>
@@ -169,11 +198,14 @@ export const CoursesGrid: React.FC<CoursesGridProps> = ({ onOpenEnquiry, showAll
           })}
         </div>
 
-        {/* Informative fee disclaimer as required by client instructions */}
-        <div className="mt-8 p-4 rounded-xl bg-amber-50/70 border border-amber-200/80 text-xs text-amber-950 flex items-start gap-3">
-          <Info className="w-4 h-4 text-amber-700 shrink-0 mt-0.5" />
+        {/* Informative fee disclaimer */}
+        <div className="mt-10 p-5 rounded-2xl bg-amber-50/80 border border-amber-300/80 text-xs text-amber-950 flex flex-col sm:flex-row items-start gap-3.5 shadow-2xs">
+          <div className="w-8 h-8 rounded-lg bg-amber-200/80 flex items-center justify-center text-amber-800 shrink-0 font-bold">
+            <Info className="w-4 h-4 text-amber-800" />
+          </div>
           <div>
-            <strong>Transparent & Honest Information:</strong> Shree Computer Classes does not publish speculative fee figures or durations online without student consultation. Please call or visit the centre in Pump House, Andheri East to get exact, updated fees and choose your convenient batch timing.
+            <strong className="text-amber-900 font-bold block mb-0.5">Transparent & Personalized Consultation:</strong>
+            Because course modules, batch timings (morning/afternoon/evening), and individual pace vary, exact fees and scheduling are finalized with you at the centre. Call or visit Shop No. 10, Avishkar Society, Pump House, Andheri East for immediate enrollment guidance.
           </div>
         </div>
 
@@ -188,3 +220,4 @@ export const CoursesGrid: React.FC<CoursesGridProps> = ({ onOpenEnquiry, showAll
     </section>
   );
 };
+
